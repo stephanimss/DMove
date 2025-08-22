@@ -1,0 +1,18 @@
+# MacOS system file
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+myenv/
+
+# Model files (YOLO weights, dll)
+*.pt
+*.pth
+*.onnx
+*.torchscript
+*.bin
+*.param

@@ -86,16 +86,14 @@ while True:
 
     t_stop = time.perf_counter()
     frame_rate_calc = 1 / (t_stop - t_start)
-    frame_rate_buffer.append(frame_rate_calc)
-    if len(frame_rate_buffer) > fps_avg_len:
-        frame_rate_buffer.pop(0)
-    avg_frame_rate = np.mean(frame_rate_buffer)
+    fps_buffer.append(frame_rate_calc)
+    if len(fps_buffer) > fps_avg_len:
+        fps_buffer.pop(0)
+    avg_frame_rate = np.mean(fps_buffer)
 
     cv2.putText(frame, f'FPS: {avg_frame_rate:.2f}', (20,30), cv2.FONT_HERSHEY_SIMPLEX, .7, (0,255,255), 2)
 
     cv2.imshow("YOLOv8n", frame)
-    if record:
-        recorder.write(frame)
 
     key = cv2.waitKey(5)
     if key == ord('q') or key == ord('Q'):
