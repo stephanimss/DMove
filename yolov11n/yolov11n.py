@@ -4,7 +4,8 @@ import numpy as np
 import gpiozero
 from ultralytics import YOLO
 
-model_path = "yolo11n_ncnn_model"   
+model_detect = YOLO("yolo8n_ncnn_model", task="detect")
+model_pose   = YOLO("yolov8n-pose_ncnn_model", task="pose")
 cam_source = "usb0"                
 resW, resH = 1280, 720              #1920×1080
 min_thresh = 0.5
@@ -12,8 +13,7 @@ gpio_pin = 14
 
 led = gpiozero.LED(gpio_pin)
 
-model = YOLO(model_path, task="detect")
-labels = model.names
+labels = model_detect.names
 
 if "usb" in cam_source:
     cam_type = "usb"
@@ -67,10 +67,14 @@ while True:
             label = f'{classname}: {int(conf*100)}%'
             cv2.putText(frame, label, (xmin, ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
 
+    pose_detected = False  
+
     if person_detected:
-        consecutive_detections = min(8, consecutive_detections + 1)
-    else:
-        consecutive_detections = max(0, consecutive_detections - 1)
+        pose_results = model_pose(frame, verbose=False)
+        frame = pose_results[0].plot()
+
+        if pose_results and len(pose_results[0].keypoints) > 0:
+            pose_detected = True
 
     if consecutive_detections >= 8 and gpio_state == 0:
         gpio_state = 1
